@@ -1,0 +1,9 @@
+.app {
+    display: flex;
+    padding: 10px;
+}
+
+.app-content {
+    width: 100%;
+    height: calc(100vh - 20px);
+}
