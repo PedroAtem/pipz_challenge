@@ -5,5 +5,21 @@
 
 .app-content {
     width: 100%;
-    height: calc(100vh - 20px);
+    height: calc(100vh - 84px);
+}
+
+.themeToggleForm {
+    align-items: center
+}
+
+.themeToggle {
+    margin: 0px !important;
+}
+
+.toolbar {
+    display: flex;
+
+    .space {
+        flex-grow: 1;
+    }
 }
