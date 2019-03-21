@@ -12,10 +12,9 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Brightness2 from '@material-ui/icons/Brightness2';
 import Brightness5 from '@material-ui/icons/Brightness5';
-import Card from '@material-ui/core/Card';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import Animes from './components/Animes';
+import Routes from './routes';
 
 export default class App extends Component {
   state = {
@@ -46,9 +45,6 @@ export default class App extends Component {
         <CssBaseline />
         <AppBar position="static">
           <Toolbar className="toolbar">
-            <Typography variant="h6" color="inherit">
-              Anime List
-            </Typography>
             <div className="space"></div>
             <FormGroup className="themeToggleForm" row>
               <FormControlLabel
@@ -66,9 +62,9 @@ export default class App extends Component {
           </Toolbar>
         </AppBar>
         <div className="app">
-          <Card className="app-content">
-            <Animes />
-          </Card>
+          <div className="app-content">
+            <Routes />
+          </div>
         </div>
       </MuiThemeProvider>
     );
