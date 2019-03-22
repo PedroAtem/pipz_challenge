@@ -12,6 +12,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Brightness2 from '@material-ui/icons/Brightness2';
 import Brightness5 from '@material-ui/icons/Brightness5';
 import Checkbox from '@material-ui/core/Checkbox';
+import Typography from '@material-ui/core/Typography';
 
 import Routes from './routes';
 
@@ -42,8 +43,9 @@ export default class App extends Component {
     return (
       <MuiThemeProvider theme={theme}>
         <CssBaseline />
-        <AppBar position="static">
+        <AppBar position="static" color="primary">
           <Toolbar className="toolbar">
+            <Typography variant="h4">Anime List</Typography>
             <div className="space"></div>
             <FormGroup className="themeToggleForm" row>
               <FormControlLabel

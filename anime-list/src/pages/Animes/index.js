@@ -2,72 +2,125 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as AnimesActions from '../../store/actions';
-
 import './styles.scss';
+import Button from '@material-ui/core/Button';
 
 import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-
 import { Link } from 'react-router-dom';
 
-const Animes = ({ animes, requestAnimes }) => (
-  <div>
-    <Card className="title-card">
-      <Typography variant="h4">
-        Animes list
-      </Typography>
-      <button onClick={() => requestAnimes()}>Carregar todos</button>
-      {/* <form noValidate autoComplete="off">
-        <TextField
-          id="filter-input"
-          label="Filter"
-          className="filter-input"
-          onChange={this.filter}
-          margin="normal"
-        />
-      </form> */}
-    </Card>
-    <div className="animes">
-      {animes.data.map((anime, index) => (
-        <Card key={index} className="anime">
-          <CardHeader
-            title={anime.canonicalTitle}
+class Animes extends Component {
+  componentDidMount() {
+    this.props.requestAnimes();
+  }
+
+  filterByText = () => event => {
+    let filter = event.target.value;
+    if (filter != '') {
+      filter = `filter[text]=${filter}`;
+    }
+    this.props.requestAnimesFromUrl(`urlwillbeignored?${filter}`);
+  };
+  
+  state = {
+    firstPage: () => {
+      const { links } = this.props.animes.list;
+      this.props.requestAnimesFromUrl(links.first);
+    },
+    prevPage: () => {
+      const { links } = this.props.animes.list;
+      this.props.requestAnimesFromUrl(links.prev);
+    },
+    nextPage: () => {
+      const { links } = this.props.animes.list;
+      this.props.requestAnimesFromUrl(links.next);
+    },
+    lastPage: () => {
+      const { links } = this.props.animes.list;
+      this.props.requestAnimesFromUrl(links.last);
+    }
+  }
+  
+  render() {
+    const { animes } = this.props;
+    const { links } = animes.list || {};
+
+    return (
+      <div>
+        <Card className="flex-header">
+          <TextField
+            id="input-filter"
+            label="Filter text"
+            onChange={this.filterByText()}
           />
-          <CardMedia
-            className="anime-poster-image"
-            image={anime.posterImage}
-          />
-          <CardContent>
-            <Typography variant="h5">
-              {anime.averageRating}
-            </Typography>
-            <Typography component="p">
-              well meaning and kindly.
-              <br />
-              {'"a benevolent smile"'}
-            </Typography>
-          </CardContent>
-          <CardActions className="actions">
-            <Link className="link-details" to={`/anime/${index}`}>
-              <Button variant="outlined" color="secondary" size="small">
-                Details
-              </Button>
-            </Link>
-          </CardActions>
+          <div className="separator"></div>
+          {links ? links.first ? <Button variant="outlined" size="small" color="primary" onClick={this.state.firstPage}>First</Button> : null : null}
+          {links ? links.prev ? <Button variant="outlined" size="small" color="primary" onClick={this.state.prevPage}>Prev</Button> : null : null}
+          {links ? links.next ? <Button variant="outlined" size="small" color="primary" onClick={this.state.nextPage}>Next</Button> : null : null}
+          {links ? links.last ? <Button variant="outlined" size="small" color="primary" onClick={this.state.lastPage}>Last</Button> : null : null}
         </Card>
-      ))}
-    </div>
-  </div>
-)
+        <div className="flex-table">
+          <Card className="row row-title">
+            <div className="col">
+            <Typography>Image</Typography>
+            </div>
+            <div className="col">
+              <Typography>Canonical Title</Typography>
+            </div>
+            <div className="col">
+              <Typography>Average Rating</Typography>
+            </div>
+            <div className="col">
+              <Typography>Start Date</Typography>
+            </div>
+            <div className="col">
+              <Typography>End Date</Typography>
+            </div>
+            <div className="col">
+              <Typography>Status</Typography>
+            </div>
+            <div className="col">
+              <Typography>Action</Typography>
+            </div>
+          </Card>
+          {animes.list ? animes.list.data ? animes.list.data.map((anime, index) => (
+            <Card className="row" key={index}>
+              <div className="col">
+                {anime.attributes.posterImage ? <img className="poster" src={anime.attributes.posterImage.original} /> : null}
+              </div>
+              <div className="col">
+                <Typography>{anime.attributes.canonicalTitle}</Typography>
+              </div>
+              <div className="col">
+                <Typography>{anime.attributes.averageRating}</Typography>
+              </div>
+              <div className="col">
+                <Typography>{anime.attributes.startDate}</Typography>
+              </div>
+              <div className="col">
+                <Typography>{anime.attributes.endDate}</Typography>
+              </div>
+              <div className="col">
+                <Typography>{anime.attributes.status}</Typography>
+              </div>
+              <div className="col">
+                <Link to={`/anime/${anime.id}`}>
+                  <Button variant="outlined" size="small" color="primary">
+                    Details
+                  </Button>
+                </Link>
+              </div>
+            </Card>
+          )) : null : null}
+        </div>
+      </div>
+    )
+  }
+}
+
 
 const mapStateToProps = state => {
-  console.log(state)
   return {
     animes: state.animes,
   }
@@ -76,33 +129,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch =>
   bindActionCreators(AnimesActions, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(Animes);
+const AnimesComponent = connect(mapStateToProps, mapDispatchToProps)(Animes);
 
-// export default class Animes extends Component {
-  
-
-//   componentWillMount() {
-//     const { animes } = this.state;
-//     this.state.filtered_animes = animes;
-//   }
-
-//   filter = event => {
-//     const text = event.target.value;
-//     this.setState({
-//       filter_text: text
-//     });
-//     const filtered_animes = this.state.animes.filter(anime => {
-//       if (anime.canonicalTitle.toLowerCase().indexOf(text.toLowerCase()) > -1) {
-//         return anime
-//       }
-//     });
-//     this.setState({ filtered_animes })
-//   }
-
-//   render() {
-//     const { filtered_animes } = this.state;
-//     return (
-      
-//     )
-//   }
-// }
+export default AnimesComponent
