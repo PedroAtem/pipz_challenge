@@ -1,39 +1,39 @@
 import React, { Component } from 'react';
+import { Provider } from 'react-redux';
+import store from './store';
 import './App.scss';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Brightness2 from '@material-ui/icons/Brightness2';
+import Brightness5 from '@material-ui/icons/Brightness5';
+import Checkbox from '@material-ui/core/Checkbox';
 
-import Card from '@material-ui/core/Card';
-import Button from '@material-ui/core/Button';
+import Routes from './routes';
 
 export default class App extends Component {
   state = {
     theme: createMuiTheme({
-      palette: {
-        type: 'dark',
-      },
-    })
+      typography: { useNextVariants: true },
+      palette: { type: 'light' }
+    }),
+    themeToggle: false
   }
 
-  darkTheme = () => {
-    console.log(this.state.theme);
+  darkTheme = () => this.changeTheme('dark')
+  lightTheme = () => this.changeTheme('light');
+  changeTheme = name => event => {
+    this.setState({ [name]: event.target.checked });
     this.setState({
       theme: createMuiTheme({
-        palette: {
-          type: 'dark',
-        },
+        typography: { useNextVariants: true },
+        palette: { type: event.target.checked ? 'dark' : 'light' }
       })
-    })
-  }
-
-  lightTheme = () => {
-    this.setState({
-      theme: createMuiTheme({
-        palette: {
-          type: 'light',
-        },
-      })
-    })
+    });
   }
 
   render() {
@@ -41,18 +41,32 @@ export default class App extends Component {
 
     return (
       <MuiThemeProvider theme={theme}>
-        <div className="app">
-          <Card className="app-content">
-            <Button variant="contained" onClick={this.darkTheme}>Dark</Button>
-            <Button variant="contained" onClick={this.lightTheme}>Light</Button>
-            <br></br><br></br>
-            <Button variant="contained">Default</Button>
-            <Button variant="contained" color="primary">Primary</Button>
-            <Button variant="contained" color="secondary">Secondary</Button>
-            <Button variant="contained" color="secondary" disabled>Disabled</Button>
-            <Button variant="contained" href="#contained-buttons">Link</Button>
-          </Card>
-        </div>
+        <CssBaseline />
+        <AppBar position="static">
+          <Toolbar className="toolbar">
+            <div className="space"></div>
+            <FormGroup className="themeToggleForm" row>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    icon={<Brightness5 />}
+                    checkedIcon={<Brightness2 />}
+                    onChange={this.changeTheme('themeToggle')}
+                    value="themeToggle"
+                  />
+                }
+                label={theme.palette.type}
+              />
+            </FormGroup>
+          </Toolbar>
+        </AppBar>
+        <Provider store={store}>
+          <div className="app">
+            <div className="app-content">
+              <Routes />
+            </div>
+          </div>
+        </Provider>
       </MuiThemeProvider>
     );
   }
